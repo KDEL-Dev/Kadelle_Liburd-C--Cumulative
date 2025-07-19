@@ -1,0 +1,6 @@
+@Kadelle_Liburd_C__Cumulative_HostAddress = http://localhost:5019
+
+GET {{Kadelle_Liburd_C__Cumulative_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
