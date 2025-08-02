@@ -10,7 +10,7 @@ namespace Kadelle_Liburd_C__Cumulative.Models
 
         private static string Password { get { return ""; } }
 
-        private static string Database { get { return "schoolb"; } }
+        private static string Database { get { return "schoolc"; } }
 
         private static string Server { get { return "localhost"; } }
 
