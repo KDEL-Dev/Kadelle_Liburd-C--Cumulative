@@ -29,7 +29,7 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
         [Route(template: "ListInformationStudents")]
 
 
-        public List<string> InformationStudents()
+        public List<string> InformationStudents(string searchKey)
         {
             //Create empty list for teacher name
             List<string> InformationStudents = new List<string>();

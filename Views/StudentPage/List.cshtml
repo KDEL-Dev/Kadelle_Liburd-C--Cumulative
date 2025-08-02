@@ -1,0 +1,51 @@
+﻿
+<style>
+
+    table, tr {
+        border: 1px solid black;
+    }
+</style>
+@model IEnumerable<Kadelle_Liburd_C__Cumulative.Models.Student>
+
+<h2> I want to list articles here</h2>
+
+<form method="GET" action="/StudentPage/List"
+        <div>
+            <input type="text" name="searchKey" />
+            <input type="submit" value="Search" />
+        </div>
+    </form>
+
+<div>
+    <p> Click link below to add a new teacher</p>
+    <nav>
+        <a class="navlink" href="/StudentPage/Add">Add a new Student</a>
+    </nav>
+</div>
+
+@foreach (Kadelle_Liburd_C__Cumulative.Models.Student student in Model)
+{
+    @* <div>
+    <a href="">@teacher.teacherid @teacher.teacherfname @teacher.teacherlname @teacher.employeenumber @teacher.hiredate  @teacher.salary</a>
+
+    </div> *@
+
+    <table>
+        <tr>
+            <td>
+                @student.studentid
+            </td>
+            <td>
+                @student.studentfname @student.studentlname
+            </td>
+            <td>
+                @student.studentnumber
+
+            </td>
+            <td>
+                @student.enroldate
+            </td>
+   
+        </tr>
+    </table>
+}

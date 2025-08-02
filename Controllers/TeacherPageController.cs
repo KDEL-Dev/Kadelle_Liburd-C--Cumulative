@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Kadelle_Liburd_C__Cumulative.Models;
+using MySql.Data.MySqlClient;
+using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace Kadelle_Liburd_C__Cumulative.Controllers
 {
-    
+
     public class TeacherPageController : Controller
     {
         private readonly TeacherAPIController _api;
@@ -16,29 +19,59 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
 
         //GET: TeacherPage/List
         [HttpGet]
-        public IActionResult List()
+
+        public IActionResult List(string searchKey)
         {
-            List<Teacher> teachers = _api.ListInformationTeachers();
+            
+            List<Teacher> teachers = _api.ListInformationTeachers(searchKey);
 
             return View(teachers);
         }
 
         //GET: TeacherPage/Show{id}
-        [HttpGet]
+
         public IActionResult Show(int id)
         {
             //figure out how to get the id to bring in information on a single teacher
             Teacher SelectedTeacher = _api.FindTeacher(id);
 
-            SelectedTeacher.teacherid = 5;
+            //SelectedTeacher.teacherid = 5;
 
-           return View(SelectedTeacher);
+            return View(SelectedTeacher);
         }
 
+
+        //GET: TeacherPage/Add
+        [HttpGet]
+
+        public IActionResult Add(int id)
+        {
+            return View();
+        }
+
+        //POST:TeacherPage/Create
+        [HttpPost]
+        public IActionResult Create(Teacher NewTeacher)
+        {
+            int teacherId = _api.AddTeacher(NewTeacher);
+            return RedirectToAction("Show", new { id = teacherId });
+        }
+
+        //GET : TeacherPage/DeleteConfirm/{id}
+        [HttpGet]
+        public IActionResult DeleteConfirm(int id)
+        {
+            Teacher SelectedTeacher = _api.FindTeacher(id);
+            return View(SelectedTeacher);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            int teacherId = _api.DeleteTeacher(id);
+            return RedirectToAction("List");
+        }
     }
-
-
-    
 
 }
 

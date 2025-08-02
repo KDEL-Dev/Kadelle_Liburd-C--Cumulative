@@ -1,7 +1,17 @@
 ﻿@model Kadelle_Liburd_C__Cumulative.Models.Teacher
 
+<div>
+    <nav>
+        <a class="navlink" href="/TeacherPage/List">Return to List</a>
+    </nav>
+</div>
+
 <h1>@Model.teacherfname.ToString() @Model.teacherlname.ToString()</h1>
 <p>@Model.teacherid.ToString()</p>
 <p>@Model.hiredate.ToString("yyyy-M-d")</p>
 <p>@Model.employeenumber.ToString()</p>
 <p>@Model.salary.ToString()</p>
+
+<div>
+    <a href="/TeacherPage/DeleteConfirm/@Model.teacherid">Delete</a>
+</div>

@@ -1,10 +1,11 @@
 ﻿using Kadelle_Liburd_C__Cumulative.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using MySql.Data.MySqlClient;
-using System.Runtime.InteropServices.Marshalling;
+using Mysqlx.Datatypes;
 using Mysqlx.Resultset;
+using System;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace Kadelle_Liburd_C__Cumulative.Controllers
 {
@@ -29,62 +30,16 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
         /// TeacherID: "12",Name:"Wendell Williams", Employee Number: "T635", Hire Date: "2018-05-13 00:00:00" Salary: "84.45"
         /// TeacherID: "13", Name: "Dale Hunter", Employee Number: "T784", Hire Date: "2019-06-04 00:00:00" Salary: "87.48"</example>
         /// <returns>Should return a list of teachers that has their Name, ID, Hire Date, Employee Number and Salary</returns>
-        
+
         [HttpGet]
-        [Route(template:"ListInformationTeachers")]
+        [Route(template: "ListInformationTeachers")]
 
-        //A previous attempt to bring up list but was getting an error where it says I can't convert a list <string> to list <modal>
-        /*
-        public List<string> InformationTeachers()
-        {
-            //Create empty list for teacher name
-            List<string> InformationTeachers = new List<string>();
-
-            
-            using (MySqlConnection connection = _context.AccessDatabase())
-            {
-                connection.Open();
-                //Creates a new command (query) for the database
-                MySqlCommand Command = connection.CreateCommand();
-
-                //MySql Query goes here
-                //can place the select from teachers into it's own variable if you would like and have  commandtext equal that
-                Command.CommandText = "select * from teachers";
-
-                //Places result of Query above into a variable
-                using (MySqlDataReader ResultSet = Command.ExecuteReader())
-                {
-                    //Loops through the result set
-                    while (ResultSet.Read())
-                    {
-                        int teacherId = Int32.Parse(ResultSet["teacherid"].ToString()); 
-                        string teacherfname = ResultSet["teacherfname"].ToString ();
-                        string teacherLname = ResultSet["teacherlname"].ToString();
-                        string employeeNumber = ResultSet["employeenumber"].ToString() ;
-                        DateTime hireDate = DateTime.Parse(ResultSet["hiredate"].ToString ()) ;
-                        decimal salary = decimal.Parse(ResultSet["salary"].ToString()) ;
-                       
-                        string InformationTeacher = $"{teacherId} {teacherfname} {teacherLname} {employeeNumber} {hireDate} {salary} ";
-
-                        //Adds names to the empty list we created above
-                        InformationTeachers.Add(InformationTeacher);
-
-                    }
-                }
-            }
-
-            return InformationTeachers;
-            
-            
-        }
-
-        */
-
-        public List<Teacher> ListInformationTeachers()
+        //NEW Added null to search key
+        public List<Teacher> ListInformationTeachers(string searchKey = null)
         {
             //Creates a new list called teacher
             List<Teacher> Teachers = new List<Teacher>();
-               
+
             using (MySqlConnection connection = _context.AccessDatabase())
             {
                 //Opens the connection to the database
@@ -99,7 +54,7 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
 
                 using (MySqlDataReader ResultSet = command.ExecuteReader())
                 {
-                    
+
                     while (ResultSet.Read())
                     {
                         //Gathers teachers information by using a loop and places it inside an object which in this case is "CurrentTeacher"
@@ -125,10 +80,11 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
 
 
 
+
         /// <summary>
         /// This GET request should bring up the information for a single teacher
         /// </summary>
-        /// <param name="TeacherId"></param>       
+
         /// <example> GET api/Teacher/FindTeacher/{TeacherId} -> TeacherID: "11",Name:"Betty Walker", Employee Number: "T601", Hire Date: "2014-08-04 00:00:00" Salary:"45.25"</example>
         /// <returns>Should return a list of one teachers information</returns>
         [HttpGet]
@@ -142,13 +98,16 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
             using (MySqlConnection Connection = _context.AccessDatabase())
             {
                 //Query for grabbing teachers information based on their ID
-                string query = "select * from teachers where teacherid=" + TeacherId;
+                string query = "select * from teachers where teacherid=" + TeacherId; //REMOVED THIS SECTION!!!
+
+
                 //opens the connection to the database
                 Connection.Open();
 
                 MySqlCommand command = Connection.CreateCommand();
                 //executes our query
-                command.CommandText = query;    
+                command.CommandText = query; //TURNED THIS OFF, NEW CODE BELOW
+
 
                 using (MySqlDataReader ResultSet = command.ExecuteReader())
                 {
@@ -158,10 +117,10 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
                         SelectedTeacher.teacherid = Convert.ToInt32(ResultSet["teacherid"]);
                         SelectedTeacher.teacherfname = ResultSet["teacherfname"].ToString();
                         SelectedTeacher.teacherlname = ResultSet["teacherlname"].ToString();
-                        SelectedTeacher.employeenumber = ResultSet["employeenumber"].ToString() ;
-                        SelectedTeacher.hiredate = DateTime.Parse(ResultSet["hiredate"].ToString ()) ;
-                        SelectedTeacher.salary = decimal.Parse(ResultSet["salary"].ToString()) ;
-                        
+                        SelectedTeacher.employeenumber = ResultSet["employeenumber"].ToString();
+                        SelectedTeacher.hiredate = DateTime.Parse(ResultSet["hiredate"].ToString());
+                        SelectedTeacher.salary = decimal.Parse(ResultSet["salary"].ToString());
+
                     }
                 }
             }
@@ -169,5 +128,69 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
             return SelectedTeacher;
         }
 
+        /// <summary>
+        /// This POST request will be used to add a new teachers information
+        /// </summary>
+        /// <param name="TeacherData"></param>
+        /// <returns>Adds a new teacher</returns>
+        [HttpPost(template: "AddTeacher")]
+        public int AddTeacher([FromBody] Teacher TeacherData)
+        {
+            //Query that I will use to add a new teachers information.
+            string query = "insert into teachers (teacherfname,teacherlname,employeenumber,hiredate,salary) values (@teacherfname,@teacherlname,@employeenumber,@hiredate,@salary)";
+
+            int teacherId = -1;
+
+            
+            using (MySqlConnection connection = _context.AccessDatabase())
+            {
+                //opens connection to the database
+                connection.Open();
+
+                MySqlCommand command = connection.CreateCommand();
+
+                //excutes the query we stated above
+                command.CommandText = query;
+                //Parameters that will be manually added except for @hiredate
+                command.Parameters.AddWithValue("@teacherfname", TeacherData.teacherfname);
+                command.Parameters.AddWithValue("@teacherlname", TeacherData.teacherlname);
+                command.Parameters.AddWithValue("@employeenumber", TeacherData.employeenumber);
+                command.Parameters.AddWithValue("@hiredate", DateTime.Now);
+                command.Parameters.AddWithValue("@salary", TeacherData.salary);
+
+                command.ExecuteNonQuery();
+                 teacherId = Convert.ToInt32(command.LastInsertedId);
+                //returns the id of the teacher that was last added
+                return teacherId;
+
+            }
+
+        
+        }
+
+        /// <summary>
+        /// This Delete Request will remove a teachers information from our database.
+        /// </summary>
+        /// <example>GET api/Teacher/DeleteTeacher/{TeacherId} -> /DeleteTeacher/{15} = Teacher with the id of 15 will be deleted from the database</example>
+        /// <returns>Deletes a teacher of your choice</returns>
+        [HttpDelete(template:"DeleteTeacher/{teacherId}")]
+        public int DeleteTeacher(int teacherId)
+        {
+            using (MySqlConnection connection = _context.AccessDatabase())
+            {
+                connection.Open();
+
+                MySqlCommand command = connection.CreateCommand();
+
+                //This is the query that will delete a teacher based off the teacherid you input.
+                command.CommandText = "delete from teachers where teacherid=@id";
+                command.Parameters.AddWithValue("@id", teacherId);
+                return command.ExecuteNonQuery();
+            }
+        }
+        
+
     }
+
 }
+
