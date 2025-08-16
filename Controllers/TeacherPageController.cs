@@ -22,7 +22,7 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
 
         public IActionResult List(string searchKey)
         {
-            
+
             List<Teacher> teachers = _api.ListInformationTeachers(searchKey);
 
             return View(teachers);
@@ -71,7 +71,35 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
             int teacherId = _api.DeleteTeacher(id);
             return RedirectToAction("List");
         }
+
+
+
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            Teacher SelectedTeacher = _api.FindTeacher(id);
+            return View(SelectedTeacher);
+        }
+
+        [HttpPost]
+        public IActionResult Update(int id, string teacherfname, string teacherlname, string employeenumber, decimal salary, DateTime hiredate)
+        {
+            Teacher UpdatedTeacher = new Teacher();
+            UpdatedTeacher.teacherfname = teacherfname;
+            UpdatedTeacher.teacherlname = teacherlname;
+            UpdatedTeacher.employeenumber = employeenumber;
+            UpdatedTeacher.salary = salary;
+            UpdatedTeacher.hiredate = hiredate; 
+
+            _api.UpdateTeacher(id, UpdatedTeacher);
+
+            return RedirectToAction("Show", new { id = id });
+        }
+
+
     }
+
 
 }
 

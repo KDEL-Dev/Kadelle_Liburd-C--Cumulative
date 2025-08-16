@@ -1,0 +1,30 @@
+﻿@model Kadelle_Liburd_C__Cumulative.Models.Teacher
+
+<div id="containershow">
+    <nav>
+        <a class="navlink" href="/TeacherPage/Show/@Model.teacherid">Return</a>
+    </nav>
+    <h2>New Teacher</h2>
+    <form method="POST" action="/TeacherPage/Update/@Model.teacherid">
+        <div class="inputrow">
+            <label for="teacherfname">First Name:</label>
+            <input type="text" id="teacherfname" name="teacherfname" value="@Model.teacherfname" />
+
+        </div>
+        <div class="inputrow">
+            <label for="teacherlname">Last Name:</label>
+            <input type="text" id="teacherlname" name="teacherlname" value="@Model.teacherlname" />
+
+        </div>
+        <div class="inputrow">
+            <label for="employeenumber">employeenumber:</label>
+            <input type="text" id="employeenumber" name="employeenumber" value="@Model.employeenumber" />
+        </div>
+        <div class="inputrow">
+            <label for="hiredate">hiredate:</label>
+        </div>
+        <div class="inputrow">
+            <input type="submit" value="Update Teacher" />
+        </div>
+    </form>
+</div>

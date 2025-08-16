@@ -141,7 +141,7 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
 
             int teacherId = -1;
 
-            
+
             using (MySqlConnection connection = _context.AccessDatabase())
             {
                 //opens connection to the database
@@ -159,13 +159,13 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
                 command.Parameters.AddWithValue("@salary", TeacherData.salary);
 
                 command.ExecuteNonQuery();
-                 teacherId = Convert.ToInt32(command.LastInsertedId);
+                teacherId = Convert.ToInt32(command.LastInsertedId);
                 //returns the id of the teacher that was last added
                 return teacherId;
 
             }
 
-        
+
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
         /// </summary>
         /// <example>GET api/Teacher/DeleteTeacher/{TeacherId} -> /DeleteTeacher/{15} = Teacher with the id of 15 will be deleted from the database</example>
         /// <returns>Deletes a teacher of your choice</returns>
-        [HttpDelete(template:"DeleteTeacher/{teacherId}")]
+        [HttpDelete(template: "DeleteTeacher/{teacherId}")]
         public int DeleteTeacher(int teacherId)
         {
             using (MySqlConnection connection = _context.AccessDatabase())
@@ -188,9 +188,34 @@ namespace Kadelle_Liburd_C__Cumulative.Controllers
                 return command.ExecuteNonQuery();
             }
         }
-        
+
+        [HttpPut(template: "UpdateTeacher/{teacherid}")]
+        public Teacher UpdateTeacher(int teacherid, [FromBody] Teacher TeacherData)
+        {
+            using (MySqlConnection Connection = _context.AccessDatabase())
+            {
+                Connection.Open();
+
+                MySqlCommand Command = Connection.CreateCommand();
+
+                Command.CommandText = "update teachers set teacherfname=@teacherfname, teacherlname=@teacherlname, employeenumber=@employeenumber, hiredate=@hiredate where teacherid=@id";
+                Command.Parameters.AddWithValue("@teacherfname", TeacherData.teacherfname);
+                Command.Parameters.AddWithValue("@teacherlname", TeacherData.teacherlname);
+                Command.Parameters.AddWithValue("@employeenumber", TeacherData.employeenumber);
+                Command.Parameters.AddWithValue("@hiredate", TeacherData.hiredate);
+                Command.Parameters.AddWithValue("@salary", TeacherData.salary);
+
+                Command.Parameters.AddWithValue("@id", teacherid);
+
+                Command.ExecuteNonQuery();
+
+
+
+            }
+
+            return FindTeacher(teacherid);
+        }
 
     }
-
 }
 
